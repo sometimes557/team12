@@ -22,25 +22,24 @@ def scrape_amazon_reviews(product_id, max_pages=5):
         response = requests.get(url, headers=headers)
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        # 修改评论容器选择器：从div改为li
         for review in soup.find_all('li', {'data-hook': 'review'}):
-            # 提取用户名（增强错误处理）
+            # 提取用户名
             username_elem = review.find('span', class_='a-profile-name')
             username = username_elem.text.strip() if username_elem else 'N/A'
 
-            # 提取评分（增加错误处理）
+            # 提取评分
             rating_elem = review.find('i', {'data-hook': 'review-star-rating'})
             rating = float(rating_elem.text.split()[0]) if rating_elem else 0.0
 
-            # 提取标题（增加错误处理）
+            # 提取标题
             title_elem = review.find('a', {'data-hook': 'review-title'})
             title = title_elem.text.strip() if title_elem else 'N/A'
 
-            # 提取评论内容（增加错误处理）
+            # 提取评论内容
             body_elem = review.find('span', {'data-hook': 'review-body'})
             body = body_elem.text.strip() if body_elem else 'N/A'
 
-            # 提取日期（增加错误处理）
+            # 提取日期
             date_elem = review.find('span', {'data-hook': 'review-date'})
             date = date_elem.text.strip() if date_elem else 'N/A'
 
