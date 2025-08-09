@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import time
+import random
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0',
@@ -22,6 +23,7 @@ def scrape_amazon_reviews(product_id, max_pages=5):
         response = requests.get(url, headers=headers)
         soup = BeautifulSoup(response.text, 'html.parser')
 
+        # 修改评论容器选择器：从div改为li
         for review in soup.find_all('li', {'data-hook': 'review'}):
             # 提取用户名
             username_elem = review.find('span', class_='a-profile-name')
@@ -51,13 +53,17 @@ def scrape_amazon_reviews(product_id, max_pages=5):
                 'date': date
             }
             reviews.append(review_data)
-        time.sleep(2)  # 降低请求频率
+        # 添加随机延迟避免被反爬
+        time.sleep(random.uniform(2, 4))
 
     return pd.DataFrame(reviews)
 
 
 if __name__ == "__main__":
-    test_product_id = "1593279280"  # 示例产品ID
+    # 输入产品ID
+    test_product_id=input("请输入产品ID：")
+    #test_product_id = "1593279280"  # 示例产品ID
+    print("请稍后。。。")
 
     try:
         reviews_df = scrape_amazon_reviews(test_product_id, max_pages=2)
