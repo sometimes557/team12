@@ -58,11 +58,9 @@ def search_amazon_products(keyword, max_pages=1):
 
                 # 获取标题
                 title = None
-                title_tag = container.find('h2', class_='a-size-medium a-spacing-none a-color-base a-text-normal')
+                title_tag = container.select_one('h2[class*="a-size-"]')
                 if title_tag:
-                    title_span = title_tag.find('span')
-                    if title_span:
-                        title = title_span.text.strip()
+                    title = title_tag.get_text(strip=True)
 
                 if product_id:
                     product_data.append({
