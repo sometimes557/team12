@@ -1,8 +1,8 @@
-import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import time
 import random
+import requests
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0',
@@ -14,7 +14,7 @@ headers = {
 }
 
 
-def scrape_amazon_reviews(product_id, max_pages=5):
+def scrape_amazon_reviews(product_id, product_title, max_pages=5):
     base_url = f"https://www.amazon.com/product-reviews/{product_id}"
     reviews = []
 
@@ -46,6 +46,8 @@ def scrape_amazon_reviews(product_id, max_pages=5):
             date = date_elem.text.strip() if date_elem else 'N/A'
 
             review_data = {
+                'product_id': product_id,
+                'product_title': product_title,
                 'username': username,
                 'rating': rating,
                 'title': title,
@@ -60,40 +62,48 @@ def scrape_amazon_reviews(product_id, max_pages=5):
 
 
 if __name__ == "__main__":
-    # 输入产品ID
-    test_product_id=input("请输入产品ID：")
-    #test_product_id = "1593279280"  # 示例产品ID
-    print("请稍后。。。")
-
     try:
-        reviews_df = scrape_amazon_reviews(test_product_id, max_pages=2)
+        # 从CSV文件读取产品ID和标题
+        products_df = pd.read_csv('amazon_product_ids.csv')
+        print(f"从amazon_product_ids.csv读取到 {len(products_df)} 个产品")
+        all_reviews = []
 
-        print(f"成功爬取 {len(reviews_df)} 条评论")
+        for index, row in products_df.iterrows():
+            product_id = row['product_id']
+            product_title = row['title']
+            print(f"\n正在处理产品: {product_title} (ID: {product_id})")
 
-        # 保存评论数据到CSV文件
-        reviews_df.to_csv('amazon_reviews.csv', index=False, encoding='utf-8')
-        print("评论数据已保存到 amazon_reviews.csv")
+            # 增加调试信息：检查请求是否正常
+            test_url = f"https://www.amazon.com/product-reviews/{product_id}/?pageNumber=1"
+            test_response = requests.get(test_url, headers=headers)
+            print(f"测试请求状态码：{test_response.status_code}")  # 200表示正常
+            print(f"响应内容长度：{len(test_response.text)}")  # 若过小可能被反爬
 
-        # 增加调试信息：检查请求是否正常
-        test_url = f"https://www.amazon.com/product-reviews/{test_product_id}/?pageNumber=1"
-        test_response = requests.get(test_url, headers=headers)
-        print(f"\n测试请求状态码：{test_response.status_code}")  # 200表示正常
-        print(f"响应内容长度：{len(test_response.text)}")  # 若过小可能被反爬
+            # 检查是否被亚马逊识别为机器人
+            if "robot" in test_response.text.lower() or "captcha" in test_response.text.lower():
+                print("警告：请求可能被亚马逊反爬机制拦截（检测到机器人验证）")
 
-        # 检查是否被亚马逊识别为机器人
-        if "robot" in test_response.text.lower() or "captcha" in test_response.text.lower():
-            print("警告：请求可能被亚马逊反爬机制拦截（检测到机器人验证）")
+            # 保存原始HTML用于分析页面结构
+            html_filename = f"amazon_test_page_{product_id}.html"
+            with open(html_filename, "w", encoding="utf-8") as f:
+                f.write(test_response.text)
+            print(f"原始页面HTML已保存到 {html_filename}，可用于检查选择器是否有效")
 
-        # 保存原始HTML用于分析页面结构
-        with open("amazon_test_page.html", "w", encoding="utf-8") as f:
-            f.write(test_response.text)
-        print("原始页面HTML已保存到 amazon_test_page.html，可用于检查选择器是否有效")
+            # 爬取评论
+            reviews_df = scrape_amazon_reviews(product_id, product_title, max_pages=2)
+            all_reviews.append(reviews_df)
+            print(f"成功爬取 {len(reviews_df)} 条评论")
+            time.sleep(random.uniform(2, 4))  # 添加延迟避免被反爬
 
-        if len(reviews_df) == 0:
-            print("未爬取到数据，可能原因：")
-            print("1. 页面结构变化，选择器失效")
-            print("2. 被亚马逊反爬机制拦截")
-            print("3. 产品ID无效或无评论")
+        # 合并所有评论数据并保存
+        if all_reviews:
+            combined_reviews = pd.concat(all_reviews, ignore_index=True)
+            combined_reviews.to_csv('amazon_reviews.csv', index=False, encoding='utf-8')
+            print(f"\n所有评论数据已保存到 amazon_reviews.csv，共 {len(combined_reviews)} 条评论")
+        else:
+            print("\n未爬取到任何评论数据")
 
+    except FileNotFoundError:
+        print("错误: 未找到amazon_product_ids.csv文件，请先运行ymx3_22.py生成产品ID文件")
     except Exception as e:
-        print(f"测试过程中出现错误：{str(e)}")
+        print(f"处理过程中出现错误：{str(e)}")
