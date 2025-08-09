@@ -537,26 +537,27 @@
 
         // 搜索功能实现
         function setupSearch() {
-            const searchIcon = document.querySelector('.search-icon');
-            const searchInput = document.querySelector('.search-input');
+ const searchIcon = document.querySelector('.search-icon');
+const searchInput = document.querySelector('.search-input');
 
-            searchIcon.addEventListener('click', () => {
-                const keyword = searchInput.value.trim();
+ searchIcon.addEventListener('click', () => {
+ const keyword = searchInput.value.trim();
 
-                if (keyword) {
-                    alert(`搜索内容: ${keyword}`);
-                    // 实际应用中可替换为AJAX请求或页面跳转
-                } else {
-                    alert('请输入搜索内容');
-                }
-            });
+ if (keyword) {
+ // 跳转到新的页面2实例，并带上搜索参数
+ window.location.href = '第一版搜索展示网页.html?search=' + encodeURIComponent(keyword) + '&redirect=true';
+} else {
+ alert('请输入搜索内容');
+ }
+ });
 
-            searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    searchIcon.click();
-                }
-            });
-        }
+ searchInput.addEventListener('keypress', (e) => {
+ if (e.key === 'Enter') {
+ searchIcon.click();
+ }
+ });
+}
+
 
         // 获取URL参数
         function getURLParameter(name) {
