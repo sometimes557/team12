@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>家电评论分析系统</title>
+    <title>电商评论分析系统</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* 基础重置与全局样式 */
@@ -364,7 +364,7 @@
         <!-- 新增搜索框 -->
         <div class="search-container">
             <div class="search-box">
-                <input type="text" class="search-input" placeholder="搜索你感兴趣的电器吧">
+                <input type="text" class="search-input" placeholder="搜索你感兴趣的产品吧">
                 <svg class="search-icon" viewBox="0 0 24 24" fill="none">
                     <path
                         d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z"
@@ -385,11 +385,11 @@
     <div class="main-content">
         <!-- 家电展示区 -->
         <div class="appliance-section">
-            <h2 class="section-title">家电产品分析</h2>
+            <h2 class="section-title">产品分析</h2>
             <div class="appliance-display">
                 <div class="appliance-image">
-                    <img src="https://images.unsplash.com/photo-1550009158-9dcfbed1d89d?q=80&w=1000" alt="智能冰箱">
-                    <div class="appliance-name">智能双开门冰箱</div>
+                    <img src="https://images.unsplash.com/photo-1550009158-9dcfbed1d89d?q=80&w=1000" alt="产品图片">
+                    <div class="appliance-name">vivio S17e</div>
                 </div>
             </div>
 
@@ -437,10 +437,10 @@
             <div class="summary-section" id="summarySection">
                 <h3 class="summary-title">用户评论综合分析</h3>
                 <p class="summary-content">
-                    基于<span class="summary-highlight" id="totalReviewsSummary">24,587条</span>用户评论分析显示，用户对于该冰箱的<span
-                        class="summary-highlight">冷藏功能</span>给予了高度评价，<span
-                        class="summary-highlight">85%</span>的用户认为保鲜效果突出。关于噪音问题，<span
-                        class="summary-highlight">15%</span>的用户反馈运行声音较大，其中<span
+                    基于<span class="summary-highlight" id="totalReviewsSummary">24,587条</span>用户评论分析显示，用户对于该产品的<span
+                        class="summary-highlight">游戏功能</span>给予了高度评价，<span
+                        class="summary-highlight">85%</span>的用户认为运行效果突出。关于声音问题，<span
+                        class="summary-highlight">15%</span>的用户反馈运行声音较好,音质好，其中<span
                         class="summary-negative">3%</span>的用户认为已影响到日常使用。智能功能中，<span
                         class="summary-highlight">App远程控制</span>的易用性获得最高满意度（92%），而<span
                         class="summary-negative">语音识别</span>的准确度（78%）仍有改进空间。
@@ -545,7 +545,7 @@ const searchInput = document.querySelector('.search-input');
 
  if (keyword) {
  // 跳转到新的页面2实例，并带上搜索参数
- window.location.href = '第一版搜索展示网页.html?search=' + encodeURIComponent(keyword) + '&redirect=true';
+ window.location.href = 'result_interface.html?search=' + encodeURIComponent(keyword) + '&redirect=true';
 } else {
  alert('请输入搜索内容');
  }
