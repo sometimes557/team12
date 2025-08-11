@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索历史记录</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 基础重置与全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: #f5f7fa;
+            padding: 20px;
+            color: #333;
+        }
+
+        /* 头部导航与Logo */
+        .header-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: rgb(239, 239, 239);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .home-link-container {
+            margin-left: 20px;
+        }
+
+        .home-link {
+            text-decoration: none;
+            color: #4e6ef2;
+            font-weight: 500;
+            font-size: 15px;
+            padding: 6px 12px;
+            border-radius: 18px;
+            transition: all 0.2s;
+        }
+
+        .home-link:hover {
+            background-color: #f0f4ff;
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .company-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: #4e6ef2;
+        }
+
+        /* 主内容区 */
+        .main-content {
+            max-width: 800px;
+            margin: 90px auto 40px;
+            padding: 25px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            font-size: 28px;
+            position: relative;
+        }
+
+        .page-title:after {
+            content: "";
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: #4e6ef2;
+            margin: 12px auto;
+            border-radius: 2px;
+        }
+
+        /* 历史记录列表 */
+        .history-section {
+            margin-bottom: 30px;
+        }
+
+        .history-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .clear-history {
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .clear-history:hover {
+            background-color: #ff6b81;
+        }
+
+        .history-list {
+            list-style: none;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-link {
+            flex: 1;
+            text-decoration: none;
+            color: #4e6ef2;
+            font-size: 16px;
+            transition: color 0.2s;
+        }
+
+        .history-link:hover {
+            color: #3742fa;
+        }
+
+        .history-time {
+            margin: 0 15px;
+            color: #888;
+            font-size: 14px;
+        }
+
+        .delete-history {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 18px;
+            cursor: pointer;
+            transition: color 0.2s;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .delete-history:hover {
+            color: #ff4757;
+            background-color: #f9f9f9;
+        }
+
+        .no-history {
+            text-align: center;
+            color: #999;
+            padding: 40px 0;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .logo-container {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .main-content {
+                margin-top: 170px;
+                padding: 15px;
+            }
+
+            .history-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .history-time {
+                margin: 0;
+            }
+
+            .delete-history {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="header-container">
+        <!-- Logo容器 -->
+        <div class="logo-container">
+            <!-- 企业Logo -->
+            <img class="company-logo"
+                src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/creation_agent/05433fecd0354b6abf69b01d84de2c43~tplv-a9rns2rl98-web-preview-watermark.png?rcl=20250804204841824A6265E6A6E7CA1F32&rk3s=8e244e95&rrcfp=5057214b&x-expires=2069671744&x-signature=rQr3oVDd%2B9oUt1%2BqX3XNyPsmwWw%3D"
+                alt="企业Logo">
+
+            <!-- 专业团队Logo -->
+            <div class="team-logo">
+                <div class="logo-text">专业团队</div>
+            </div>
+            <div class="home-link-container">
+                <a href="start_interface.html" class="home-link">首页</a>
+            </div>
+            <div class="home-link-container">
+                <a href="javascript:history.back()" class="home-link">返回上一级</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主体内容 -->
+    <div class="main-content">
+        <h1 class="page-title">搜索历史记录</h1>
+
+        <div class="history-section" id="historySection">
+            <div class="history-controls">
+                <h2>最近搜索</h2>
+                <button class="clear-history" id="clearHistoryBtn">清空历史记录</button>
+            </div>
+            <div id="historyList">
+                <!-- 历史记录将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script src="history.js"></script>
+    <script>
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 渲染历史记录
+            renderHistory();
+
+            // 绑定清空历史记录按钮事件
+            const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+            clearHistoryBtn.addEventListener('click', function() {
+                if (confirm('确定要清空所有搜索历史记录吗？')) {
+                    HistoryManager.clearSearchHistory();
+                    renderHistory();
+                }
+            });
+
+            // 渲染历史记录函数
+            function renderHistory() {
+                const historyList = document.getElementById('historyList');
+                historyList.innerHTML = HistoryManager.generateHistoryHTML();
+
+                // 绑定删除按钮事件
+                const deleteButtons = document.querySelectorAll('.delete-history');
+                deleteButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const id = this.getAttribute('data-id');
+                        HistoryManager.deleteHistoryItem(id);
+                        renderHistory();
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
