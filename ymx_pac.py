@@ -43,7 +43,7 @@ def scrape_amazon_reviews(product_id, product_title, max_pages=5):
 
             # 提取日期
             date_elem = review.find('span', {'data-hook': 'review-date'})
-            date = date_elem.text.strip() if date_elem else 'N/A'
+            date = date_elem.text.strip().replace('Reviewed in the United States on ', '') if date_elem else 'N/A'
 
             review_data = {
                 'product_id': product_id,
@@ -104,6 +104,6 @@ if __name__ == "__main__":
             print("\n未爬取到任何评论数据")
 
     except FileNotFoundError:
-        print("错误: 未找到amazon_product_ids.csv文件，请先运行ymx3_22.py生成产品ID文件")
+        print("错误: 未找到amazon_product_ids.csv文件，请先运行ymx_pac.py生成产品ID文件")
     except Exception as e:
         print(f"处理过程中出现错误：{str(e)}")
