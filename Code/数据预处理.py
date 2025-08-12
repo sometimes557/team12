@@ -77,7 +77,7 @@ from wordcloud import WordCloud
 frequencies = result.groupby(by = ['word'])['word'].count()
 frequencies = frequencies.sort_values(ascending = False)
 backgroud_Image=plt.imread('../Data/pl.jpg')
-wordcloud = WordCloud(font_path="simhei.ttf",
+wordcloud = WordCloud(font_path="/System/Library/Fonts/PingFang.ttc",
                       max_words=100,
                       background_color='white',
                       mask=backgroud_Image)

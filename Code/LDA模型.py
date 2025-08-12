@@ -113,7 +113,7 @@ neg_k = lda_topic_search(neg_corpus, neg_dict)
 # ---------------------------
 # 4. 可视化主题数寻优结果
 # ---------------------------
-plt.rcParams['font.sans-serif'] = ['SimHei']  # 解决中文显示问题
+plt.rcParams['font.sans-serif'] = ['PingFang']  # 解决中文显示问题
 plt.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
 
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8))

@@ -114,7 +114,7 @@ freq_pos = posdata.groupby(by=['word'])['word'].count()
 freq_pos = freq_pos.sort_values(ascending=False)
 
 wordcloud = WordCloud(
-    font_path="simhei.ttf" if backgroud_Image is not None else None,
+    font_path="/System/Library/Fonts/PingFang.ttc" if backgroud_Image is not None else None,
     max_words=100,
     background_color='white',
     mask=backgroud_Image
