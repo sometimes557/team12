@@ -4,6 +4,8 @@ import time
 import random
 import requests
 import os
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 USER_AGENTS = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0',
@@ -22,13 +24,16 @@ headers = {
 }
 
 
-def scrape_amazon_reviews(product_id, product_title, max_pages=5):
+def scrape_amazon_reviews(product_id, product_title, max_pages=5, request_headers=None):
+    headers = request_headers or globals().get('headers', {})
+
     base_url = f"https://www.amazon.com/product-reviews/{product_id}"
     reviews = []
 
     for page in range(1, max_pages + 1):
         url = f"{base_url}/?pageNumber={page}"
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=20)  # 添加timeout参数
+
         soup = BeautifulSoup(response.text, 'html.parser')
 
         # 修改评论容器选择器：从div改为li
@@ -69,49 +74,73 @@ def scrape_amazon_reviews(product_id, product_title, max_pages=5):
     return pd.DataFrame(reviews)
 
 
-if __name__ == "__main__":
+def process_product(product_row):
+    """包装单个产品的爬取流程用于线程池"""
+    product_id = product_row['product_id']
+    product_title = product_row['title']
+
+    # 为每个线程创建独立的请求头
+    local_headers = headers.copy()
+    local_headers['User-Agent'] = random.choice(USER_AGENTS)
+
     try:
-        # 从CSV文件读取产品ID和标题
-        products_df = pd.read_csv('amazon_product_ids.csv')
-        print(f"从amazon_product_ids.csv读取到 {len(products_df)} 个产品")
+        # 测试请求代码保持不变，但使用local_headers
+        test_url = f"https://www.amazon.com/product-reviews/{product_id}/?pageNumber=1"
+        test_response = requests.get(test_url, headers=local_headers, timeout=20)
 
-        for index, row in products_df.iterrows():
-            product_id = row['product_id']
-            product_title = row['title']
-            print(f"\n正在处理产品: {product_title} (ID: {product_id})")
+        # 检查是否被亚马逊识别为机器人
+        if "robot" in test_response.text.lower() or "captcha" in test_response.text.lower():
+            print("警告：请求可能被亚马逊反爬机制拦截（检测到机器人验证）")
 
-            # 增加调试信息：检查请求是否正常
-            test_url = f"https://www.amazon.com/product-reviews/{product_id}/?pageNumber=1"
-            test_response = requests.get(test_url, headers=headers)
-            print(f"测试请求状态码：{test_response.status_code}")  # 200表示正常
-            print(f"响应内容长度：{len(test_response.text)}")  # 若过小可能被反爬
+        # 保存原始HTML用于分析页面结构
+        html_filename = f"amazon_test_page_{product_id}.html"
+        with open(html_filename, "w", encoding="utf-8") as f:
+            f.write(test_response.text)
+        print(f"原始页面HTML已保存到 {html_filename}，可用于检查选择器是否有效")
 
-            # 检查是否被亚马逊识别为机器人
-            if "robot" in test_response.text.lower() or "captcha" in test_response.text.lower():
-                print("警告：请求可能被亚马逊反爬机制拦截（检测到机器人验证）")
+        # 爬取评论
+        reviews_df = scrape_amazon_reviews(product_id, product_title, max_pages=2)
 
-            # 保存原始HTML用于分析页面结构
-            html_filename = f"amazon_test_page_{product_id}.html"
-            with open(html_filename, "w", encoding="utf-8") as f:
-                f.write(test_response.text)
-            print(f"原始页面HTML已保存到 {html_filename}，可用于检查选择器是否有效")
-
-            # 爬取评论
-            reviews_df = scrape_amazon_reviews(product_id, product_title, max_pages=2)
-
-            # 新增：立即保存到CSV（追加模式）
-            file_exists = os.path.isfile('amazon_reviews.csv')
+        # 保存数据需要加锁（如果多个线程同时写入）
+        with threading.Lock():
             reviews_df.to_csv('amazon_reviews.csv',
-                            mode='a' if file_exists else 'w',  # 存在则追加，否则新建
-                            header=not file_exists,            # 仅首次写入表头
+                            mode='a',
+                            header=False,
                             index=False,
                             encoding='utf-8')
 
-            print(f"成功爬取并保存 {len(reviews_df)} 条评论")
-            time.sleep(random.uniform(2, 4))
-
-        print("\n所有产品评论爬取完成")
-    except FileNotFoundError:
-        print("错误: 未找到amazon_product_ids.csv文件，请先运行ymx_pac.py生成产品ID文件")
+        return f"{product_title} 爬取完成，获得 {len(reviews_df)} 条评论"
     except Exception as e:
-        print(f"处理过程中出现错误：{str(e)}")
+        return f"{product_title} 爬取失败: {str(e)}"
+
+if __name__ == "__main__":
+    try:
+        # 在开始前创建带表头的空文件（如果不存在）
+        if not os.path.exists('amazon_reviews.csv'):
+            pd.DataFrame(columns=['product_id', 'product_title', 'username', 'rating', 'title', 'body', 'date'])\
+                .to_csv('amazon_reviews.csv', index=False)
+
+        # 从CSV文件读取产品ID和标题
+        products_df = pd.read_csv('amazon_product_ids.csv')
+        print(f"从amazon_product_ids.csv读取到 {len(products_df)} 个产品")
+        # 修改主循环为使用带超时的线程池
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            futures = []
+            for _, row in products_df.iterrows():
+                future = executor.submit(process_product, row)
+                futures.append(future)
+
+            for future in as_completed(futures):
+                try:
+                    result = future.result(timeout=40)  # 添加40秒超时
+                    print(result)
+                except TimeoutError:
+                    print("商品处理超时，已跳过")
+                except Exception as e:
+                    print(f"处理失败: {str(e)}")
+                time.sleep(random.uniform(3, 5))  # 增加整体延迟
+        print("\n所有产品评论爬取完成")  # 确保在线程池完成后执行
+    except FileNotFoundError:
+        print("错误: 未找到amazon_product_ids.csv文件")
+    except Exception as e:
+        print(f"全局异常: {str(e)}")
