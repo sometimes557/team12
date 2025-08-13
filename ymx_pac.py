@@ -3,6 +3,7 @@ import pandas as pd
 import time
 import random
 import requests
+import os
 
 USER_AGENTS = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0',
@@ -98,17 +99,55 @@ if __name__ == "__main__":
 
             # 爬取评论
             reviews_df = scrape_amazon_reviews(product_id, product_title, max_pages=2)
-            all_reviews.append(reviews_df)
-            print(f"成功爬取 {len(reviews_df)} 条评论")
-            time.sleep(random.uniform(2, 4))  # 添加延迟避免被反爬
 
-        # 合并所有评论数据并保存
-        if all_reviews:
-            combined_reviews = pd.concat(all_reviews, ignore_index=True)
-            combined_reviews.to_csv('amazon_reviews.csv', index=False, encoding='utf-8')
-            print(f"\n所有评论数据已保存到 amazon_reviews.csv，共 {len(combined_reviews)} 条评论")
-        else:
-            print("\n未爬取到任何评论数据")
+            # 新增：立即保存到CSV（追加模式）
+            file_exists = os.path.isfile('amazon_reviews.csv')
+            reviews_df.to_csv('amazon_reviews.csv',
+                            mode='a' if file_exists else 'w',  # 存在则追加，否则新建
+                            header=not file_exists,            # 仅首次写入表头
+                            index=False,
+                            encoding='utf-8')
+
+            print(f"成功爬取并保存 {len(reviews_df)} 条评论")
+            time.sleep(random.uniform(2, 4))
+
+        for index, row in products_df.iterrows():
+            product_id = row['product_id']
+            product_title = row['title']
+            print(f"\n正在处理产品: {product_title} (ID: {product_id})")
+
+            # 增加调试信息：检查请求是否正常
+            test_url = f"https://www.amazon.com/product-reviews/{product_id}/?pageNumber=1"
+            test_response = requests.get(test_url, headers=headers)
+            print(f"测试请求状态码：{test_response.status_code}")  # 200表示正常
+            print(f"响应内容长度：{len(test_response.text)}")  # 若过小可能被反爬
+
+            # 检查是否被亚马逊识别为机器人
+            if "robot" in test_response.text.lower() or "captcha" in test_response.text.lower():
+                print("警告：请求可能被亚马逊反爬机制拦截（检测到机器人验证）")
+
+            # 保存原始HTML用于分析页面结构
+            html_filename = f"amazon_test_page_{product_id}.html"
+            with open(html_filename, "w", encoding="utf-8") as f:
+                f.write(test_response.text)
+            print(f"原始页面HTML已保存到 {html_filename}，可用于检查选择器是否有效")
+
+            # 爬取评论
+            reviews_df = scrape_amazon_reviews(product_id, product_title, max_pages=2)
+
+            # 新增：立即保存到CSV（追加模式）
+            file_exists = os.path.isfile('amazon_reviews.csv')
+            reviews_df.to_csv('amazon_reviews.csv',
+                            mode='a' if file_exists else 'w',  # 存在则追加，否则新建
+                            header=not file_exists,            # 仅首次写入表头
+                            index=False,
+                            encoding='utf-8')
+
+            print(f"成功爬取并保存 {len(reviews_df)} 条评论")
+            time.sleep(random.uniform(2, 4))
+
+
+        print("\n所有产品评论爬取完成")
 
     except FileNotFoundError:
         print("错误: 未找到amazon_product_ids.csv文件，请先运行ymx_pac.py生成产品ID文件")
