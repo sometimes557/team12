@@ -8,6 +8,7 @@ URL="https://ssr1.scrape.center/"
 for i in range(1,11):
     URL = f"https://ssr1.scrape.center/page/{i}"
     test_response=requests.get(URL,headers=headers)
+    soup=BeautifulSoup(test_response.content,"lxml")
     soup=BeautifulSoup(test_response.text,'html.parser')
     all_title=soup.find_all("h2",attrs={"class":"m-b-sm"})
     for title in all_title:

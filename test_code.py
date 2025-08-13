@@ -25,7 +25,7 @@ import concurrent.futures  # 补充缺失的导入
 # 配置与常量定义
 # ------------------------------
 TEST_CONFIG = {
-    "base_url": "https://www.bilibili.com/",  # 替换为实际测试(项目)网站
+    "base_url": "http://localhost:63342/team12/start_interface.html",  # 替换为实际测试(项目)网站
     "test_paths": {
         "product_comments": "/product1/comments",
         "article_reviews": "/article3/discussions",
