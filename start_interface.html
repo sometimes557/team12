@@ -20,6 +20,11 @@
             display: flex;
             flex-direction: column;
             background-color: #e6f0ff;
+            background-image: url('https://youke1.picui.cn/s1/2025/08/12/689a9c9e691a7.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
         }
 
         /* 头部样式 */
@@ -29,7 +34,7 @@
             align-items: center;
             padding: 20px 40px;
             background-color: rgb(239, 239, 239);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             position: relative;
         }
 
@@ -66,6 +71,18 @@
             text-align: center;
             width: 100%;
             max-width: 600px;
+        }
+
+        .header-title {
+            color: #4e6ef2;
+            font-size: clamp(1.2rem, 4vw, 2.2rem);
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .vertical-bar {
+            margin: 0 8px;
+            font-weight: normal;
         }
 
         .nav-links {
@@ -143,7 +160,7 @@
             background-color: #f0f4ff;
         }
 
-        
+
 
         .nav-links a:hover {
             color: #4e6ef2;
@@ -157,7 +174,6 @@
             align-items: center;
             justify-content: center;
             padding: 40px 20px;
-            background-color: white;
         }
 
         .search-container {
@@ -175,6 +191,8 @@
             font-size: 16px;
             outline: none;
             transition: border-color 0.3s, box-shadow 0.3s;
+            background-color: rgba(255, 255, 255, 0.4);
+            color: #333;
         }
 
         .search-input:focus {
@@ -196,6 +214,45 @@
         .search-box {
             position: relative;
             width: 100%;
+        }
+
+        /* 热门搜索样式 */
+        .hot-search {
+            margin-top: 15px;
+            padding: 10px 15px;
+            background-color: rgba(255, 255, 255, 0.4);
+            border: 2px solid #8a2be2;
+            border-radius: 25px;
+        }
+
+        .hot-search-title {
+            color: #666;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .search-tags {
+            display: inline-block;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .search-tag {
+            display: inline-block;
+            padding: 5px 12px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border: 1px solid #8a2be2;
+            border-radius: 15px;
+            color: #333;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .search-tag:hover {
+            background-color: #f0f4ff;
+            color: #4e6ef2;
+            border-color: #4e6ef2;
         }
 
         /* 底部样式 */
@@ -229,7 +286,7 @@
             padding: 15px;
             width: 300px;
             max-width: 90%;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             z-index: 100;
             margin-bottom: 10px;
         }
@@ -251,7 +308,10 @@
             margin-bottom: 0;
         }
 
-        .about-us-link, .help-link, .contact-link, .disclaimer-link {
+        .about-us-link,
+        .help-link,
+        .contact-link,
+        .disclaimer-link {
             position: relative;
             cursor: help;
         }
@@ -311,11 +371,21 @@
                 alt="电商评论分析" class="logo-img">
             <span class="logo-text">专业团队</span>
         </div>
+
         <div class="header-center-container">
-            <img src="https://youke1.picui.cn/s1/2025/08/11/689992f3b7106.png" alt="header中心图片" class="header-center-image">
+            <div class="header-title">
+                ProElite<span class="vertical-bar">|</span>团队，我们是专业的！
+            </div>
         </div>
+
         <nav class="nav-links">
             <div class="history-container">
+                <div class="floating-ball" id="floatingBall">
+                  <div class="ball-content">
+                    <i class="fas fa-headset"></i>
+                  </div>
+                  <div class="tooltip-text" id="tooltipText">专业团队，为您提供最好的服务</div>
+                </div>
                 <a href="history_interface.html" class="history-link"><i class="fas fa-history"></i> 历史记录</a>
                 <div id="historyTooltip"></div>
             </div>
@@ -333,6 +403,19 @@
                     <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round" />
                 </svg>
+            </div>
+            <!-- 热门搜索区域 -->
+            <div class="hot-search">
+                <span class="hot-search-title">热门搜索:</span>
+                <div class="search-tags">
+                    <span class="search-tag" data-keyword="手机">手机</span>
+                    <span class="search-tag" data-keyword="笔记本电脑">笔记本电脑</span>
+                    <span class="search-tag" data-keyword="耳机">耳机</span>
+                    <span class="search-tag" data-keyword="平板电脑">平板电脑</span>
+                    <span class="search-tag" data-keyword="智能手表">智能手表</span>
+                    <span class="search-tag" data-keyword="无线耳机">无线耳机</span>
+                    <span class="search-tag" data-keyword="相机">相机</span>
+                </div>
             </div>
         </div>
     </main>
@@ -376,7 +459,7 @@
     </footer>
 
     <script src="history.js"></script>
-<script>
+    <script>
         // 搜索功能实现
         document.querySelector('.search-icon').addEventListener('click', () => {
             performSearch();
@@ -388,14 +471,27 @@
             }
         });
 
+        // 热门搜索标签点击功能
+        document.querySelectorAll('.search-tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+                const keyword = tag.getAttribute('data-keyword');
+                document.querySelector('.search-input').value = keyword;
+                // 自动提交搜索
+                performSearch();
+            });
+        });
+
         function performSearch() {
             const keyword = document.querySelector('.search-input').value.trim();
             if (keyword) {
-                // 添加到搜索历史
-                if (window.HistoryManager) {
-                    HistoryManager.addSearchHistory(keyword);
-                }
-                window.location.href = 'result_interface.html?search=' + encodeURIComponent(keyword);
+                // 先跳转，后添加到搜索历史（异步处理）
+                window.location.href = 'result_interface.html?search=' + encodeURIComponent(keyword) + '&redirect=true';
+                // 使用setTimeout异步添加到搜索历史
+                setTimeout(() => {
+                    if (window.HistoryManager) {
+                        HistoryManager.addSearchHistory(keyword);
+                    }
+                }, 0);
             } else {
                 // 使用更简洁的提示方式
                 const searchInput = document.querySelector('.search-input');
@@ -407,7 +503,7 @@
         }
 
         // 历史记录悬停功能
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const historyLink = document.querySelector('.history-link');
             const historyTooltip = document.getElementById('historyTooltip');
 
@@ -426,7 +522,7 @@
                 recentHistory.forEach(item => {
                     html += `
                         <li>
-                            <a href="result_interface.html?search=${encodeURIComponent(item.keyword)}">${item.keyword}</a>
+                            <a href="result_interface.html?search=${encodeURIComponent(item.keyword)}"><span style="margin-left: 15px;">${item.keyword}</span></a>
                         </li>
                     `;
                 });
@@ -447,7 +543,7 @@
 
             // 为历史记录链接添加事件监听
             if (historyLink && historyTooltip) {
-                historyLink.addEventListener('mouseenter', function() {
+                historyLink.addEventListener('mouseenter', function () {
                     // 立即显示tooltip，无需延迟
                     showTooltip();
                 });
@@ -455,7 +551,7 @@
                 historyLink.addEventListener('mouseleave', hideTooltip);
 
                 // 确保当鼠标移到tooltip上时不会消失
-                historyTooltip.addEventListener('mouseenter', function() {
+                historyTooltip.addEventListener('mouseenter', function () {
                     this.style.display = 'block';
                 });
 
@@ -505,7 +601,7 @@
 
             // 通用的提示框设置函数
             function setupTooltip(link, tooltip) {
-                link.addEventListener('mouseenter', function() {
+                link.addEventListener('mouseenter', function () {
                     tooltip.style.display = 'block';
                     // 计算弹出框的位置
                     const linkRect = link.getBoundingClientRect();
@@ -518,21 +614,86 @@
                     tooltip.style.bottom = (footerRect.height - (linkRect.top - footerRect.top) + 10) + 'px'; // 增加10px间距
                 });
 
-                link.addEventListener('mouseleave', function() {
+                link.addEventListener('mouseleave', function () {
                     tooltip.style.display = 'none';
                 });
 
                 // 确保当鼠标移到弹出框上时不会消失
-                tooltip.addEventListener('mouseenter', function() {
+                tooltip.addEventListener('mouseenter', function () {
                     this.style.display = 'block';
                 });
 
-                tooltip.addEventListener('mouseleave', function() {
+                tooltip.addEventListener('mouseleave', function () {
                     this.style.display = 'none';
                 });
             }
         });
     </script>
+
+
+<style>
+  /* 悬浮球样式 */
+  .floating-ball {
+    position: absolute;
+    left: -70px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 60px;
+    height: 60px;
+    background-color: #4e6ef2;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 24px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s;
+  }
+
+  .floating-ball:hover {
+    background-color: #3a5ae2;
+  }
+
+  /* 提示文本样式 */
+  .tooltip-text {
+    position: absolute;
+    right: 70px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+    font-family: "STKaiti", "KaiTi", "SimKai", serif;
+    font-size: 16px;
+  }
+
+  .floating-ball:hover .tooltip-text {
+    opacity: 1;
+    visibility: visible;
+    right: 80px;
+  }
+
+  /* 提示文本箭头 */
+  .tooltip-text::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent transparent rgba(0, 0, 0, 0.8);
+  }
+</style>
+
 </body>
 
 </html>
