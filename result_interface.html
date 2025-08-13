@@ -32,7 +32,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 15px 40px;
-            background: white;
+            background-color: rgb(239, 239, 239);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             z-index: 100;
         }
@@ -41,6 +41,24 @@
             display: flex;
             align-items: center;
             gap: 15px;
+        }
+
+        .home-link-container {
+            margin-left: 20px;
+        }
+
+        .home-link {
+            text-decoration: none;
+            color: #4e6ef2;
+            font-weight: 500;
+            font-size: 15px;
+            padding: 6px 12px;
+            border-radius: 18px;
+            transition: all 0.2s;
+        }
+
+        .home-link:hover {
+            background-color: #f0f4ff;
         }
 
         .company-logo {
@@ -68,7 +86,7 @@
             width: 100%;
             height: 40px;
             padding: 0 16px;
-            border: 1px solid #e0e0e0;
+            border: 1px solid #8a2be2;
             border-radius: 20px;
             font-size: 15px;
             outline: none;
@@ -76,7 +94,7 @@
         }
 
         .search-input:focus {
-            border-color: #4e6ef2;
+            border-color: #8a2be2;
         }
 
         .search-icon {
@@ -105,8 +123,67 @@
             transition: all 0.2s;
         }
 
+        .top-right-links a {
+            position: relative;
+        }
+
         .top-right-links a:hover {
             background-color: #f0f4ff;
+        }
+
+        /* 历史记录tooltip样式 */
+        .history-container {
+            position: relative;
+        }
+
+        #historyTooltip {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 250px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            display: none;
+            z-index: 1000;
+        }
+
+        #historyTooltip h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        #historyTooltip ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #historyTooltip li {
+            margin-bottom: 8px;
+        }
+
+        #historyTooltip li a {
+            color: #333;
+            text-decoration: none;
+            padding: 5px 0;
+            display: block;
+            transition: color 0.2s;
+        }
+
+        #historyTooltip li a:hover {
+            color: #3498db;
+        }
+
+        .no-history {
+            color: #999;
+            text-align: center;
+            padding: 10px 0;
         }
 
         /* 主内容区 */
@@ -222,9 +299,9 @@
         /* 环形进度条 */
         .progress-ring {
             position: relative;
-            width: 160px;
-            height: 160px;
-            margin: 0 auto;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
         }
 
         .ring-circle {
@@ -237,7 +314,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 32px;
+            font-size: 24px;
             font-weight: 700;
         }
 
@@ -359,6 +436,12 @@
             <div class="team-logo">
                 <div class="logo-text">专业团队</div>
             </div>
+            <div class="home-link-container">
+                <a href="start_interface.html" class="home-link">首页</a>
+            </div>
+            <div class="home-link-container">
+                <a href="javascript:history.back()" class="home-link">返回上一级</a>
+            </div>
         </div>
 
         <!-- 新增搜索框 -->
@@ -377,7 +460,10 @@
 
         <!-- 右上角导航 -->
         <div class="top-right-links">
-            <a href="#"><i class="fas fa-history"></i> 历史记录</a>
+            <div class="history-container">
+                <a href="history_interface.html" class="history-link"><i class="fas fa-history"></i> 历史记录</a>
+                <div class="tooltip" id="historyTooltip"></div>
+            </div>
         </div>
     </div>
 
@@ -399,11 +485,11 @@
                 <div class="metric-card" id="positiveRateCard">
                     <div class="metric-title">好评率</div>
                     <div class="progress-ring">
-                        <svg width="180" height="180">
-                            <circle class="ring-circle" r="85" cx="90" cy="90" stroke="#e6e6e6" stroke-width="10"
+                        <svg width="120" height="120">
+                            <circle class="ring-circle" r="50" cx="60" cy="60" stroke="#e6e6e6" stroke-width="8"
                                 fill="none"></circle>
-                            <circle class="ring-circle" r="85" cx="90" cy="90" stroke="#2ecc71" stroke-width="10"
-                                stroke-dasharray="534" stroke-dashoffset="106.8" stroke-linecap="round" fill="none">
+                            <circle class="ring-circle" r="50" cx="60" cy="60" stroke="#2ecc71" stroke-width="8"
+                                stroke-dasharray="314" stroke-dashoffset="62.8" stroke-linecap="round" fill="none">
                             </circle>
                         </svg>
                         <div class="progress-text" id="positiveRateValue">80%</div>
@@ -449,7 +535,64 @@
         </div>
     </div>
 
+    <script src="history.js"></script>
     <script>
+        // 历史记录悬停功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const historyLink = document.querySelector('.history-link');
+            const historyTooltip = document.getElementById('historyTooltip');
+
+            // 生成历史记录HTML的函数
+            function generateHistoryTooltipHTML() {
+                if (!window.HistoryManager) return '<p class="no-history">无法加载历史记录</p>';
+
+                const history = HistoryManager.getSearchHistory();
+                if (history.length === 0) {
+                    return '<p class="no-history">暂无搜索历史</p>';
+                }
+
+                let html = '<h4>最近搜索</h4><ul>';
+                // 只显示最近的5条记录
+                const recentHistory = history.slice(0, 5);
+                recentHistory.forEach(item => {
+                    html += `
+                        <li>
+                            <a href="result_interface.html?search=${encodeURIComponent(item.keyword)}">${item.keyword}</a>
+                        </li>
+                    `;
+                });
+                html += '</ul>';
+                return html;
+            }
+
+            // 显示tooltip的函数
+            function showTooltip() {
+                historyTooltip.innerHTML = generateHistoryTooltipHTML();
+                historyTooltip.style.display = 'block';
+            }
+
+            // 隐藏tooltip的函数
+            function hideTooltip() {
+                historyTooltip.style.display = 'none';
+            }
+
+            // 为历史记录链接添加事件监听
+            if (historyLink && historyTooltip) {
+                historyLink.addEventListener('mouseenter', function() {
+                    // 立即显示tooltip，无需延迟
+                    showTooltip();
+                });
+
+                historyLink.addEventListener('mouseleave', hideTooltip);
+
+                // 确保当鼠标移到tooltip上时不会消失
+                historyTooltip.addEventListener('mouseenter', function() {
+                    this.style.display = 'block';
+                });
+
+                historyTooltip.addEventListener('mouseleave', hideTooltip);
+            }
+        });    
         // API模拟数据
         const mockData = {
             positiveRate: 80,
@@ -537,26 +680,44 @@
 
         // 搜索功能实现
         function setupSearch() {
- const searchIcon = document.querySelector('.search-icon');
-const searchInput = document.querySelector('.search-input');
+            const searchIcon = document.querySelector('.search-icon');
+            const searchInput = document.querySelector('.search-input');
 
- searchIcon.addEventListener('click', () => {
- const keyword = searchInput.value.trim();
+            // 抽取搜索逻辑为单独函数
+            function performSearch() {
+                const keyword = searchInput.value.trim();
 
- if (keyword) {
- // 跳转到新的页面2实例，并带上搜索参数
- window.location.href = 'result_interface.html?search=' + encodeURIComponent(keyword) + '&redirect=true';
-} else {
- alert('请输入搜索内容');
- }
- });
+                if (keyword) {
+                    // 保存搜索历史
+                    if (window.HistoryManager) {
+                        HistoryManager.addSearchHistory(keyword);
+                    }
+                    // 跳转到新的页面实例，并带上搜索参数
+                    window.location.href = 'result_interface.html?search=' + encodeURIComponent(keyword) + '&redirect=true';
+                } else {
+                    alert('请输入搜索内容');
+                }
+            }
 
- searchInput.addEventListener('keypress', (e) => {
- if (e.key === 'Enter') {
- searchIcon.click();
- }
- });
-}
+            // 点击搜索图标触发搜索
+            searchIcon.addEventListener('click', performSearch);
+
+            // 按下Enter键触发搜索
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // 阻止默认行为
+                    performSearch();
+                }
+            });
+
+            // 额外添加keydown事件监听，确保兼容性
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // 阻止默认行为
+                    performSearch();
+                }
+            });
+        }
 
 
         // 获取URL参数
@@ -572,7 +733,12 @@ const searchInput = document.querySelector('.search-input');
 
             // 获取并显示搜索关键词
             const searchKeyword = getURLParameter('search');
+            const isRedirect = getURLParameter('redirect') === 'true';
             if (searchKeyword) {
+                // 如果是通过搜索跳转过来的，则添加到历史记录
+                if (isRedirect && window.HistoryManager) {
+                    HistoryManager.addSearchHistory(decodeURIComponent(searchKeyword));
+                }
                 // 更新页面标题
                 document.querySelector('.section-title').textContent = `"${decodeURIComponent(searchKeyword)}" 分析结果`;
                 // 更新电器名称
