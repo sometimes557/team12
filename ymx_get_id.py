@@ -68,12 +68,29 @@ def search_amazon_products(keyword, max_pages=1):
                 if title_tag:
                     title = title_tag.get_text(strip=True)
 
+                # 新增：获取图片URL
+                image_url = None
+                if parent_div:
+                    # 查找图片容器
+                    image_container = parent_div.find('div', class_='s-product-image-container')
+                    if image_container:
+                        # 查找图片标签
+                        img_tag = image_container.find('img', class_='s-image')
+                        if img_tag and 'src' in img_tag.attrs:
+                            image_url = img_tag['src']
+                        elif img_tag and 'data-src' in img_tag.attrs:
+                            # 有时图片URL存储在data-src属性中
+                            image_url = img_tag['data-src']
+
                 if product_id:
                     product_data.append({
                         'product_id': product_id,
-                        'title': title or 'N/A'
+                        'title': title or 'N/A',
+                        'image_url': image_url or 'N/A'  # 新增图片URL字段
                     })
                     print(f"提取产品: {title} (ID: {product_id})")
+                    if image_url:
+                        print(f"图片URL: {image_url}")
 
             # 随机延迟，避免被封禁
             delay = random.uniform(2, 4)
@@ -93,8 +110,8 @@ def save_to_csv(data, filename='amazon_product_ids.csv'):
         return
 
     with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
-        # CSV头部添加标题字段
-        fieldnames = ['product_id', 'title']
+        # CSV头部添加标题字段（新增image_url）
+        fieldnames = ['product_id', 'title', 'image_url']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
         writer.writeheader()
