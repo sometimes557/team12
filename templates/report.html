@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% set page_title = "报告详情 · Amazon 评论分析系统" %}
+{% block content %}
+<div class="d-flex flex-wrap gap-3 align-items-start">
+  <div class="flex-grow-1">
+    <h4 class="mb-1">{{ meta.product_title }}</h4>
+    <div class="text-muted small">ASIN: {{ meta.product_id }} · 创建时间: {{ meta.created_at }} · 评论数: {{ meta.review_count }}</div>
+  </div>
+  <div class="ms-auto">
+    <a class="btn btn-outline-secondary me-2" href="{{ url_for('export_csv', report_id=report_id) }}"><i class="bi bi-filetype-csv"></i> 导出CSV</a>
+    <a class="btn btn-primary" href="{{ url_for('export_pdf', report_id=report_id) }}"><i class="bi bi-filetype-pdf"></i> 导出PDF</a>
+  </div>
+</div>
+
+<div class="row g-3 mt-1">
+  <div class="col-md-4">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body">
+        <h6 class="card-title">情感分布</h6>
+        <canvas id="chartSentiment" height="220"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body">
+        <h6 class="card-title">评分分布</h6>
+        <canvas id="chartRating" height="220"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card shadow-sm mt-3">
+  <div class="card-body">
+    <h6 class="card-title">评分-情感 交叉分析</h6>
+    <canvas id="chartCross" height="260"></canvas>
+  </div>
+</div>
+
+{% if img_files %}
+<div class="card shadow-sm mt-3">
+  <div class="card-body">
+    <h6 class="card-title">静态可视化</h6>
+    <div class="row g-3">
+      {% for name in img_files %}
+      <div class="col-md-6">
+        <a href="{{ url_for('report_asset', report_id=report_id, name=name.split('/')[-1]) }}" target="_blank">
+          <img class="img-fluid rounded shadow-sm" src="{{ url_for('report_asset', report_id=report_id, name=name.split('/')[-1]) }}" alt="viz">
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="card shadow-sm mt-3">
+  <div class="card-body">
+    <h6 class="card-title mb-3">样例评论（最多展示200条）</h6>
+    <div class="table-responsive">
+      <table id="tblReviews" class="table table-sm table-striped align-middle">
+        <thead>
+          <tr>
+            <th>用户名</th>
+            <th>评分</th>
+            <th>情感</th>
+            <th>置信度</th>
+            <th>评论</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in samples %}
+          <tr>
+            <td>{{ r.username }}</td>
+            <td>{{ r.rating if r.rating==r.rating else '' }}</td>
+            <td>
+              {% if r.sentiment == 'positive' %}
+                <span class="badge text-bg-success">positive</span>
+              {% elif r.sentiment == 'negative' %}
+                <span class="badge text-bg-danger">negative</span>
+              {% else %}
+                <span class="badge text-bg-secondary">neutral</span>
+              {% endif %}
+            </td>
+            <td>{{ '%.0f%%' | format((r.confidence or 0)*100) }}</td>
+            <td class="text-break">{{ r.review }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.__REPORT_DATA__ = {{ charts|tojson }};
+</script>
+{% endblock %}

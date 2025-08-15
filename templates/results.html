@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分析结果 - 亚马逊评论情感分析系统</title>
+    <link rel="stylesheet" href="static/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">评论分析系统</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="search.html">产品搜索</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="history.html">历史记录</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h2>情感分析结果</h2>
+                        <h5 id="productTitle" class="text-muted mt-2"></h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h5>情感分布</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="sentimentChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h5>评分分布</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="ratingChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5>关键词云</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="wordCloud" class="text-center">
+                                    <!-- 词云将通过JavaScript生成 -->
+                                    <div class="spinner-border text-primary" role="status" id="wordCloudLoading">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>评论示例</h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="nav nav-tabs" id="reviewTabs" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="positive-tab" data-bs-toggle="tab" data-bs-target="#positive" type="button">正面评论</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="negative-tab" data-bs-toggle="tab" data-bs-target="#negative" type="button">负面评论</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="neutral-tab" data-bs-toggle="tab" data-bs-target="#neutral" type="button">中性评论</button>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" id="reviewTabsContent">
+                                    <div class="tab-pane fade show active" id="positive"></div>
+                                    <div class="tab-pane fade" id="negative"></div>
+                                    <div class="tab-pane fade" id="neutral"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 移除或注释掉不存在的JS文件引用 -->
+    <!-- <script src="static/js/analyzer.js"></script> -->
+    <!-- <script src="static/js/charts.js"></script> -->
+</body>
+</html>

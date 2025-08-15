@@ -1,0 +1,54 @@
+/* 基础 */
+:root {
+  --radius: 14px;
+}
+
+body {
+  background: var(--bs-body-bg);
+}
+
+.hero {
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, rgba(25,135,84,0.08), rgba(13,110,253,0.08));
+}
+
+.card, .btn, .form-control, .form-select, .alert {
+  border-radius: var(--radius);
+}
+
+.product-card img {
+  object-fit: contain;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.35);
+  color: #fff;
+  z-index: 2000;
+}
+
+/* Dark mode tweaks */
+[data-bs-theme="dark"] .hero {
+  background: linear-gradient(135deg, rgba(25,135,84,0.15), rgba(13,110,253,0.15));
+}
+
+.theme-dots {
+  font-size: 96px;
+  line-height: 1;
+  padding: .5rem 1rem;
+}
+
+.table td, .table th {
+  vertical-align: middle;
+}
+
+/* Chart containers for better spacing */
+canvas {
+  width: 100% !important;
+}

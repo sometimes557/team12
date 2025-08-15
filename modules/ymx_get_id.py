@@ -43,10 +43,10 @@ def search_amazon_products(keyword, max_pages=1):
                 print("警告: 可能触发了机器人检测")
 
             # 保存原始HTML
-            html_filename = f"amazon_search_{keyword}_page{page}.html"
-            with open(html_filename, 'w', encoding='utf-8') as f:
-                f.write(response.text)
-            print(f"已保存HTML到 {html_filename}")
+            # html_filename = f"amazon_search_{keyword}_page{page}.html"
+            # with open(html_filename, 'w', encoding='utf-8') as f:
+            #     f.write(response.text)
+            # print(f"已保存HTML到 {html_filename}")
 
             # 解析HTML
             soup = BeautifulSoup(response.text, 'html.parser')

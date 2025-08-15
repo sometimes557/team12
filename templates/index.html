@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% set page_title = "首页 · Amazon 评论分析系统" %}
+{% block content %}
+<section class="hero p-4 p-md-5 mb-4 rounded-3 bg-gradient position-relative overflow-hidden">
+  <div class="col-lg-8">
+    <h1 class="display-6 fw-bold">一键抓取亚马逊评论 · 自动情感分析 · 可视化报告</h1>
+    <p class="lead mt-3">输入关键词搜索商品，挑选目标后自动爬取评论并生成专业报告。支持CSV/PDF导出、历史记录、深色模式、交互式图表。</p>
+  </div>
+  <div class="theme-dots position-absolute top-0 end-0 opacity-50 d-none d-md-block">•••</div>
+</section>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <form class="row gy-2 gx-2 align-items-center" method="get" action="{{ url_for('search') }}">
+      <div class="col-12 col-md mb-2">
+        <input type="text" class="form-control form-control-lg" name="q" placeholder="输入产品关键词，例如：iphone case" required>
+      </div>
+      <div class="col-auto">
+        <select class="form-select form-select-lg" name="pages">
+          <option value="1" selected>1页</option>
+          <option value="2">2页</option>
+          <option value="3">3页</option>
+        </select>
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-primary btn-lg" type="submit"><i class="bi bi-search"></i> 搜索产品</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="row g-3 mt-4">
+  <div class="col-md-4">
+    <div class="feature card h-100 shadow-sm">
+      <div class="card-body">
+        <div class="d-flex align-items-center gap-3">
+          <div class="icon-wrap"><i class="bi bi-basket fs-3"></i></div>
+          <div>
+            <h5 class="card-title mb-1">产品搜索</h5>
+            <p class="card-text small text-muted mb-0">抓取产品ID与封面，卡片式展示，点击一键分析。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="feature card h-100 shadow-sm">
+      <div class="card-body">
+        <div class="d-flex align-items-center gap-3">
+          <div class="icon-wrap"><i class="bi bi-emoji-smile fs-3"></i></div>
+          <div>
+            <h5 class="card-title mb-1">情感分析</h5>
+            <p class="card-text small text-muted mb-0">复用本地词典与星级融合的分类器，支持中性判断优化。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="feature card h-100 shadow-sm">
+      <div class="card-body">
+        <div class="d-flex align-items-center gap-3">
+          <div class="icon-wrap"><i class="bi bi-bar-chart fs-3"></i></div>
+          <div>
+            <h5 class="card-title mb-1">可视化与导出</h5>
+            <p class="card-text small text-muted mb-0">Chart.js交互图表、响应式表格、CSV/PDF导出、历史报告留存。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

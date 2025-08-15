@@ -93,10 +93,10 @@ def process_product(product_row):
             print("警告：请求可能被亚马逊反爬机制拦截（检测到机器人验证）")
 
         # 保存原始HTML用于分析页面结构
-        html_filename = f"amazon_test_page_{product_id}.html"
-        with open(html_filename, "w", encoding="utf-8") as f:
-            f.write(test_response.text)
-        print(f"原始页面HTML已保存到 {html_filename}，可用于检查选择器是否有效")
+        # html_filename = f"amazon_test_page_{product_id}.html"
+        # with open(html_filename, "w", encoding="utf-8") as f:
+        #     f.write(test_response.text)
+        # print(f"原始页面HTML已保存到 {html_filename}，可用于检查选择器是否有效")
 
         # 爬取评论
         reviews_df = scrape_amazon_reviews(product_id, product_title, max_pages=2)

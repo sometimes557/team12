@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% set page_title = "产品搜索 · Amazon 评论分析系统" %}
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body">
+    <form class="row gy-2 gx-2 align-items-center" method="get" action="{{ url_for('search') }}">
+      <div class="col-12 col-md mb-2">
+        <input type="text" class="form-control" name="q" placeholder="输入产品关键词" value="{{ keyword or '' }}" required>
+      </div>
+      <div class="col-auto">
+        <select class="form-select" name="pages">
+          <option value="1" {{ 'selected' if used_pages==1 }}>1页</option>
+          <option value="2" {{ 'selected' if used_pages==2 }}>2页</option>
+          <option value="3" {{ 'selected' if used_pages==3 }}>3页</option>
+        </select>
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i> 搜索</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% if keyword %}
+<p class="text-muted small mt-2">已保存搜索结果到：<code>{{ saved_file }}</code></p>
+{% endif %}
+
+{% if products %}
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3 mt-2">
+  {% for p in products %}
+  <div class="col">
+    <div class="card product-card h-100 shadow-sm">
+      <div class="ratio ratio-4x3 bg-body-secondary">
+        {% if p.image_url and p.image_url != 'N/A' %}
+        <img src="{{ p.image_url }}" class="object-fit-contain p-2" alt="{{ p.title }}">
+        {% else %}
+        <div class="d-flex align-items-center justify-content-center">No Image</div>
+        {% endif %}
+      </div>
+      <div class="card-body d-flex flex-column">
+        <h6 class="card-title">{{ p.title }}</h6>
+        <div class="mt-auto d-flex flex-wrap gap-2">
+          <span class="badge text-bg-secondary">ASIN: {{ p.product_id }}</span>
+          <form method="post" action="{{ url_for('analyze') }}" class="ms-auto">
+            <input type="hidden" name="product_id" value="{{ p.product_id }}">
+            <input type="hidden" name="title" value="{{ p.title }}">
+            <input type="hidden" name="image_url" value="{{ p.image_url }}">
+            <div class="input-group input-group-sm mt-2">
+              <label class="input-group-text">页数</label>
+              <select class="form-select form-select-sm" name="max_pages">
+                <option value="1">1</option>
+                <option value="2" selected>2</option>
+                <option value="3">3</option>
+                <option value="5">5</option>
+              </select>
+              <button class="btn btn-primary" type="submit"><i class="bi bi-activity"></i> 分析</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+  {% if keyword %}
+    <div class="alert alert-info mt-3">未抓取到产品，请更换关键词或减少页数重试。</div>
+  {% endif %}
+{% endif %}
+{% endblock %}
