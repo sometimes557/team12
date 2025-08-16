@@ -9,15 +9,64 @@ body {
 
 .hero {
   border-radius: var(--radius);
-  background: linear-gradient(135deg, rgba(25,135,84,0.08), rgba(13,110,253,0.08));
+  background: linear-gradient(135deg, rgba(25, 135, 84, 0.08), rgba(13, 110, 253, 0.08));
+  position: relative;
+  overflow: hidden;
 }
 
-.card, .btn, .form-control, .form-select, .alert {
+.hero::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('https://p9-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/creation_agent/7e14a90e42994de285eff297dbfed2ec~tplv-a9rns2rl98-web-preview-watermark.png?rcl=202508160920381BA40C30CEEE98897A2F&rk3s=8e244e95&rrcfp=5057214b&x-expires=2070667251&x-signature=PV%2BzLj4s2WOIxeor4feFXm1KU0M%3D');
+  background-position: center 20%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: 0.6;
+  z-index: 1;
   border-radius: var(--radius);
+  pointer-events: none;
+}
+
+[data-bs-theme="dark"] .hero::after {
+  background-image: url("https://youke1.picui.cn/s1/2025/08/16/689ff8c617f34.jpg");
+}
+
+.hero>* {
+  position: relative;
+  z-index: 2;
+}
+
+.card,
+.btn,
+.form-control,
+.form-select,
+.alert {
+  border-radius: var(--radius);
+}
+
+.card {
+  border: 2px solid rgb(11, 130, 253) !important;
+}
+
+.product-card {
+  cursor: pointer;
 }
 
 .product-card img {
   object-fit: contain;
+}
+
+.product-card:focus {
+  outline: 2px solid #0b82fd;
+}
+
+.product-card.btn {
+  box-shadow: none;
+  background: none;
 }
 
 /* Loading Overlay */
@@ -28,14 +77,18 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(0,0,0,0.35);
+  background: rgba(0, 0, 0, 0.35);
   color: #fff;
   z-index: 2000;
 }
 
 /* Dark mode tweaks */
 [data-bs-theme="dark"] .hero {
-  background: linear-gradient(135deg, rgba(25,135,84,0.15), rgba(13,110,253,0.15));
+  background: linear-gradient(135deg, rgba(25, 135, 84, 0.15), rgba(13, 110, 253, 0.15));
+}
+
+[data-bs-theme="dark"] .hero::before {
+  background: rgba(0, 0, 0, 0.7);
 }
 
 .theme-dots {
@@ -44,11 +97,153 @@ body {
   padding: .5rem 1rem;
 }
 
-.table td, .table th {
+.table td,
+.table th {
   vertical-align: middle;
 }
 
 /* Chart containers for better spacing */
 canvas {
   width: 100% !important;
+}
+
+/* 首页功能卡片悬停样式 */
+.feature.card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.feature.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* 产品搜索卡片 - 亮红色悬停 */
+.row .col-md-4:nth-child(1) .feature.card:hover {
+  background-color: #ff6b6b !important;
+  color: white !important;
+}
+
+.row .col-md-4:nth-child(1) .feature.card:hover .icon-wrap {
+  color: white !important;
+}
+
+.row .col-md-4:nth-child(1) .feature.card:hover .card-text {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* 情感分析卡片 - 亮蓝色悬停 */
+.row .col-md-4:nth-child(2) .feature.card:hover {
+  background-color: #4ecdc4 !important;
+  color: white !important;
+}
+
+.row .col-md-4:nth-child(2) .feature.card:hover .icon-wrap {
+  color: white !important;
+}
+
+.row .col-md-4:nth-child(2) .feature.card:hover .card-text {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* 可视化与导出卡片 - 亮黄色悬停 */
+.row .col-md-4:nth-child(3) .feature.card:hover {
+  background-color: #ffd93d !important;
+  color: white !important;
+}
+
+.row .col-md-4:nth-child(3) .feature.card:hover .icon-wrap {
+  color: white !important;
+}
+
+.row .col-md-4:nth-child(3) .feature.card:hover .card-text {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* 图标悬停效果 */
+.feature.card .icon-wrap {
+  transition: color 0.3s ease;
+}
+
+/* Header背景颜色 */
+.navbar {
+  background-color: rgb(11, 130, 253) !important;
+  border-bottom: none !important;
+}
+
+.navbar-brand,
+.navbar-nav .nav-link,
+.navbar-nav .nav-link.active {
+  color: white !important;
+}
+
+.navbar-nav .nav-link:hover {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.navbar-nav .nav-link.active {
+  color: white !important;
+  font-weight: 600;
+}
+
+/* 夜间模式下的header样式 */
+[data-bs-theme="dark"] .navbar {
+  background-color: #495057 !important;
+}
+
+[data-bs-theme="dark"] .navbar-brand,
+[data-bs-theme="dark"] .navbar-nav .nav-link,
+[data-bs-theme="dark"] .navbar-nav .nav-link.active {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+[data-bs-theme="dark"] .navbar-nav .nav-link:hover {
+  color: white !important;
+}
+
+[data-bs-theme="dark"] .card {
+  border: 2px solid #4ecdc4 !important;
+  box-shadow: 0 0 0 2px #222a2e, 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 调试样式 - 帮助确认背景图片是否加载 */
+.hero {
+  min-height: 200px;
+}
+
+/* 如果图片加载失败，显示备用样式 */
+.hero.no-image {
+  background: linear-gradient(135deg, rgba(25, 135, 84, 0.1), rgba(13, 110, 253, 0.1)) !important;
+}
+
+.form-select option {
+  border-radius: 0.75rem;
+}
+
+.form-select option:hover,
+.form-select option:focus {
+  background-color: #e9ecef;
+  border-radius: 0.75rem;
+}
+
+footer {
+  background: rgb(11, 130, 253) !important;
+}
+
+footer,
+footer .text-muted,
+footer span,
+footer small {
+  color: white !important;
+}
+
+[data-bs-theme="dark"] footer {
+  background: #495057 !important;
+}
+
+[data-bs-theme="dark"] footer,
+[data-bs-theme="dark"] footer .text-muted,
+[data-bs-theme="dark"] footer span,
+[data-bs-theme="dark"] footer small {
+  color: #f8f9fa !important;
 }

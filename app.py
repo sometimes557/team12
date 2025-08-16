@@ -17,6 +17,8 @@ import uuid
 from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, send_file, flash, jsonify
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
 
 # 本地模块
 from modules.ymx_get_id import search_amazon_products, save_to_csv
